@@ -1,4 +1,5 @@
 import User from './user';
+import { expect, describe, test } from 'vitest';
 
 describe('test user domain', () => {
   test('create user success', () => {

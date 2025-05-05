@@ -1,7 +1,7 @@
 import { ulid } from 'ulid';
-import { compareSync, genSaltSync, hashSync } from 'bcrypt-ts';
 import { z, ZodError } from 'zod';
 import { GeneralError } from '../error';
+import { compareSync, genSaltSync, hashSync } from 'bcrypt-ts';
 
 const passwordSchema = z
   .string()

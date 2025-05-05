@@ -5,4 +5,4 @@ interface GeneralError extends Error {
   }[];
 }
 
-export { GeneralError };
+export type { GeneralError };
