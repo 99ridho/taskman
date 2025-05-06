@@ -1,6 +1,5 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import config from './config';
-import logger from './logger';
 import UserHandlers from './modules/user/http/handlers';
 import PostgresUserRepository from './modules/user/repository/pg';
 import { Pool } from 'pg';

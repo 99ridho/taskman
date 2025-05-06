@@ -46,7 +46,7 @@ describe('UserService', () => {
 
     it('should throw error when username does not exist', async () => {
       vi.spyOn(mockUserRepository, 'findByUsername').mockRejectedValue(
-        'not found',
+        new Error('not found'),
       );
 
       await expect(

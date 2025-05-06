@@ -186,7 +186,15 @@ export default class TaskUseCase {
     try {
       return await this.repository.deleteTaskByTaskID(taskID);
     } catch (err) {
-      throw err;
+      throw {
+        errorType: (err as GeneralError).errorType,
+        details: (err as GeneralError).details,
+        message: (err as Error).message,
+        name: 'task use case error',
+        payload: {
+          task_id: taskID,
+        },
+      } as GeneralError;
     }
   }
 }

@@ -3,7 +3,7 @@ import ProjectUseCase from '.';
 import ProjectRepository from '../repository';
 import { ProjectDTO } from '../dto';
 
-describe('TaskUseCase', () => {
+describe('ProjectUseCase', () => {
   let useCase: ProjectUseCase;
   let mockProjectRepository: ProjectRepository;
 
@@ -115,7 +115,7 @@ describe('TaskUseCase', () => {
       vi.spyOn(
         mockProjectRepository,
         'findProjectByProjectID',
-      ).mockRejectedValue('not found');
+      ).mockRejectedValue(new Error('not found'));
 
       await expect(
         useCase.editProject('invalid-id', {
@@ -158,7 +158,7 @@ describe('TaskUseCase', () => {
       vi.spyOn(
         mockProjectRepository,
         'deleteProjectByProjectID',
-      ).mockRejectedValue('not found');
+      ).mockRejectedValue(new Error('not found'));
 
       await expect(useCase.deleteProject('invalid-id')).rejects.toThrowError(
         'not found',

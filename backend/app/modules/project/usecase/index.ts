@@ -22,7 +22,13 @@ export default class ProjectUseCase {
 
       return id;
     } catch (err) {
-      throw err;
+      throw {
+        errorType: (err as GeneralError).errorType,
+        details: (err as GeneralError).details,
+        message: (err as Error).message,
+        name: 'project use case error',
+        payload: params,
+      } as GeneralError;
     }
   }
 
@@ -44,7 +50,16 @@ export default class ProjectUseCase {
 
       return updatedProject;
     } catch (err) {
-      throw err;
+      throw {
+        errorType: (err as GeneralError).errorType,
+        details: (err as GeneralError).details,
+        message: (err as Error).message,
+        name: 'project use case error',
+        payload: {
+          project_id: projectID,
+          params: params,
+        },
+      } as GeneralError;
     }
   }
 
@@ -52,7 +67,15 @@ export default class ProjectUseCase {
     try {
       return await this.repository.deleteProjectByProjectID(projectID);
     } catch (err) {
-      throw err;
+      throw {
+        errorType: (err as GeneralError).errorType,
+        details: (err as GeneralError).details,
+        message: (err as Error).message,
+        name: 'project use case error',
+        payload: {
+          project_id: projectID,
+        },
+      } as GeneralError;
     }
   }
 
@@ -84,7 +107,16 @@ export default class ProjectUseCase {
         },
       };
     } catch (err) {
-      throw err;
+      throw {
+        errorType: (err as GeneralError).errorType,
+        details: (err as GeneralError).details,
+        message: (err as Error).message,
+        name: 'project use case error',
+        payload: {
+          page: page,
+          page_size: pageSize,
+        },
+      } as GeneralError;
     }
   }
 }
