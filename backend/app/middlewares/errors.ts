@@ -19,5 +19,7 @@ export const errorHandler = (
     timestamp: new Date().toISOString,
   });
 
-  res.status(errResp.statusCode).json(errResp);
+  res.status(errResp.statusCode || 500).json({
+    error: { ...errResp },
+  });
 };

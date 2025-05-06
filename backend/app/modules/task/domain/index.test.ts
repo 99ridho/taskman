@@ -1,24 +1,32 @@
 import { Task, TaskPriority } from '.';
 import { expect, it, describe, beforeEach } from 'vitest';
+import Project from '../../project/domain';
 
 describe('Task Class', () => {
   let task: Task;
+  let project: Project;
 
   beforeEach(() => {
+    project = new Project(
+      1,
+      'proj-1',
+      'First Project',
+      'This is first project',
+      1,
+    );
     task = new Task(
       1,
       'task-001',
       'Test Task',
       'This is a test task',
       TaskPriority.MEDIUM,
-      101,
       false,
       new Date('2023-12-31'),
     );
   });
 
   it('should create a task with the correct properties', () => {
-    expect(task.primaryKey).toBe(1);
+    expect(task.id).toBe(1);
     expect(task.taskID).toBe('task-001');
     expect(task.title).toBe('Test Task');
     expect(task.description).toBe('This is a test task');
@@ -26,7 +34,6 @@ describe('Task Class', () => {
     expect(task.isCompleted).toBe(false);
     expect(task.dueDate).toEqual(new Date('2023-12-31'));
     expect(task.createdAt).toBeInstanceOf(Date);
-    expect(task.projectID).toBe(101);
   });
 
   it('should mark a task as completed', () => {
@@ -42,12 +49,18 @@ describe('Task Class', () => {
     expect(task.updatedAt).toBeInstanceOf(Date);
   });
 
+  it('should have an assigned project', () => {
+    task.assignToProject(project);
+    expect(task.assignedProject).toBe(project);
+    expect(task.updatedAt).toBeInstanceOf(Date);
+  });
+
   it('should edit task properties correctly', () => {
     const newParams = {
       title: 'Updated Task',
       description: 'Updated description',
       priority: TaskPriority.HIGH,
-      dueDate: new Date('2024-01-15'),
+      due_date: new Date('2024-01-15'),
     };
 
     task.editTask(newParams);
@@ -67,7 +80,7 @@ describe('Task Class', () => {
         title: string;
         description: string;
         priority: TaskPriority;
-        dueDate: Date;
+        due_date: Date;
       },
     );
 
