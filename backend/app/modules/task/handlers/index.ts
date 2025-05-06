@@ -99,6 +99,9 @@ export default class TaskHandlers {
       const result = await this.useCase.getTasks(
         parseInt(page),
         parseInt(pageSize),
+        (req.query.sort_by as 'DUE_DATE' | 'PRIORITY' | '') ?? '',
+        (req.query.sort_type as 'ASC' | 'DESC' | '') ?? '',
+        (req.query.status as 'COMPLETED' | 'INCOMPLETE' | '') ?? '',
       );
 
       res.status(200).json(result);

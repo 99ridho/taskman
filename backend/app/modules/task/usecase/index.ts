@@ -144,6 +144,9 @@ export default class TaskUseCase {
   async getTasks(
     page: number,
     pageSize: number,
+    sortBy: 'DUE_DATE' | 'PRIORITY' | '',
+    sortType: 'ASC' | 'DESC' | '',
+    statusFilter: 'COMPLETED' | 'INCOMPLETE' | '',
   ): Promise<{
     data: TaskDTO[];
     paging: {
@@ -159,8 +162,37 @@ export default class TaskUseCase {
         (page - 1) * pageSize,
       );
 
+      let filteredTasks = tasks;
+
+      if (statusFilter === 'COMPLETED') {
+        filteredTasks = tasks.filter((task) => task.is_completed);
+      } else if (statusFilter === 'INCOMPLETE') {
+        filteredTasks = tasks.filter((task) => !task.is_completed);
+      }
+
+      if (sortBy && sortType) {
+        filteredTasks.sort((a, b) => {
+          if (sortBy === 'DUE_DATE') {
+            // Handle cases where due_date might be undefined
+            if (!a.due_date && !b.due_date) return 0;
+            if (!a.due_date) return sortType === 'ASC' ? 1 : -1;
+            if (!b.due_date) return sortType === 'ASC' ? -1 : 1;
+
+            return sortType === 'ASC'
+              ? new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+              : new Date(b.due_date).getTime() - new Date(a.due_date).getTime();
+          }
+          if (sortBy === 'PRIORITY') {
+            return sortType === 'ASC'
+              ? a.priority - b.priority
+              : b.priority - a.priority;
+          }
+          return 0;
+        });
+      }
+
       return {
-        data: tasks,
+        data: filteredTasks,
         paging: {
           page: page,
           page_size: pageSize,
