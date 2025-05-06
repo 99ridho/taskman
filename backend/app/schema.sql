@@ -15,11 +15,13 @@ create table projects (
 	project_id varchar(255) not null,
 	title varchar(255) not null,
 	description varchar(255) null,
+	belongs_to int8 null,
 	created_at timestamptz not null default now(),
 	updated_at timestamptz null,
 	deleted_at timestamptz null,
 	
-	constraint projects_pkey primary key (id)
+	constraint projects_pkey primary key (id),
+	constraint projects_users_id_fk foreign key(belongs_to) references users(id) on delete set null
 );
 
 create table tasks (
@@ -31,14 +33,17 @@ create table tasks (
 	is_completed boolean not null default false,
 	project_id int8 null,
 	due_date timestamptz null,
+	belongs_to int8 null,
 	created_at timestamptz not null default now(),
 	updated_at timestamptz null,
 	deleted_at timestamptz null,
 	
 	constraint tasks_pkey primary key (id),
-	constraint tasks_project_id_fk foreign key(project_id) references projects(id) on delete set null
+	constraint tasks_projects_id_fk foreign key(project_id) references projects(id) on delete set null,
+	constraint tasks_users_id_fk foreign key(belongs_to) references users(id) on delete set null
 );
 
 create index project_id_idx on projects(project_id);
 create index task_id_idx on tasks(task_id);
 create index users_id_idx on users(user_id);
+create index users_username_idx on users(username);

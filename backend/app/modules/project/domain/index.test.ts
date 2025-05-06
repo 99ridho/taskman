@@ -1,5 +1,5 @@
-import Project from './project';
-import { Task, TaskPriority } from './task';
+import Project from '.';
+import { Task, TaskPriority } from '../../task/domain';
 import { expect, it, describe, beforeEach } from 'vitest';
 
 describe('Project', () => {

@@ -1,4 +1,4 @@
-import { Task, TaskPriority } from './task';
+import { Task, TaskPriority } from '.';
 import { expect, it, describe, beforeEach } from 'vitest';
 
 describe('Task Class', () => {

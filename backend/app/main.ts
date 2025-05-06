@@ -1,23 +1,34 @@
 import express, { Request, Response } from 'express';
-import { errorHandler } from './middlewares/errors';
 import config from './config';
 import logger from './logger';
+import UserHandlers from './modules/user/http/handlers';
+import PostgresUserRepository from './modules/user/repository/pg';
+import { Pool } from 'pg';
+import { UserUseCase } from './modules/user/usecase';
+import { errorHandler } from './middlewares/errors';
 
 const app = express();
 app.use(express.json());
 
-// Routes
-app.get('/', (req: Request, res: Response) => {
-  logger.info('path accessed', {
-    path: '/',
-    timestamp: new Date().toISOString(),
-  });
-  res.json({
-    status: 'ok',
-  });
+const pool = new Pool({
+  database: config.dbName,
+  host: config.dbHost,
+  user: config.dbUsername,
+  password: config.dbPassword,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
 
-// Global error handler (should be after routes)
+const userRepository = new PostgresUserRepository(pool);
+const userUseCase = new UserUseCase(userRepository);
+const userHandlers = new UserHandlers(userUseCase);
+
+const apiRoutes = express.Router();
+apiRoutes.post('/login', userHandlers.login.bind(userHandlers));
+apiRoutes.post('/register', userHandlers.register.bind(userHandlers));
+
+app.use('/api', apiRoutes);
 app.use(errorHandler);
 
 app.listen(config.port, () => {
