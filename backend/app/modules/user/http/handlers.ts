@@ -21,9 +21,9 @@ export default class UserHandlers {
 
   async register(req: Request, res: Response) {
     try {
-      const token = await this.useCase.registerUser(req.body);
+      const id = await this.useCase.registerUser(req.body);
       res.status(200).json({
-        data: token,
+        data: id,
       });
     } catch (err) {
       throw err;

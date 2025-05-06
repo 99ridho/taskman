@@ -6,11 +6,6 @@ import UserRepository from '../repository';
 import jwt from 'jsonwebtoken';
 import config from '../../../config';
 
-export interface JwtPayload {
-  user_id: string;
-  id: number;
-}
-
 export class UserUseCase {
   private repository: UserRepository;
 
@@ -47,7 +42,7 @@ export class UserUseCase {
       return jwt.sign(
         {
           user_id: registeredUser.userID,
-          id: registeredUser.primaryKey,
+          id: registeredUser.id,
         },
         config.secretKey,
       );
@@ -99,7 +94,7 @@ export class UserUseCase {
 
       const newUser = User.createNew(params.username, params.password);
       const id = await this.repository.createUser({
-        primary_key: 0,
+        id: 0,
         user_id: newUser.userID,
         username: newUser.username,
         password: newUser.password,

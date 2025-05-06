@@ -33,7 +33,7 @@ class PostgresUserRepository implements UserRepository {
       const user = result.rows[0];
 
       return {
-        primary_key: user.id,
+        id: user.id,
         user_id: user.user_id,
         username: user.username,
         password: user.password,
@@ -69,7 +69,7 @@ class PostgresUserRepository implements UserRepository {
       const user = result.rows[0];
 
       return {
-        primary_key: user.id,
+        id: user.id,
         user_id: user.user_id,
         username: user.username,
         password: user.password,
@@ -132,7 +132,7 @@ class PostgresUserRepository implements UserRepository {
 
       const user = result.rows[0];
       return {
-        primary_key: user.id,
+        id: user.id,
         user_id: user.user_id,
         username: user.username,
         password: user.password,

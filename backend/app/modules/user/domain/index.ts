@@ -5,7 +5,7 @@ import { compareSync, genSaltSync, hashSync } from 'bcrypt-ts';
 import { passwordSchema, userSchema } from './schema';
 
 class User {
-  readonly primaryKey: number;
+  readonly id: number;
   private _userID: string;
   private _username: string;
   private _password: string;
@@ -38,7 +38,7 @@ class User {
   }
 
   constructor(
-    primaryKey: number,
+    id: number,
     userID: string,
     username: string,
     password: string,
@@ -46,7 +46,7 @@ class User {
     updatedAt?: Date,
     deletedAt?: Date,
   ) {
-    this.primaryKey = primaryKey;
+    this.id = id;
     this._userID = userID;
     this._username = username;
     this._password = password;

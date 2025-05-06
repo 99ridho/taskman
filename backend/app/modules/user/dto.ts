@@ -1,7 +1,7 @@
 import User from './domain';
 
 export type UserDTO = {
-  primary_key: number;
+  id: number;
   user_id: string;
   username: string;
   password: string;
@@ -12,7 +12,7 @@ export type UserDTO = {
 
 export function toUserDomain(dto: UserDTO): User {
   return new User(
-    dto.primary_key,
+    dto.id,
     dto.user_id,
     dto.username,
     dto.password,
@@ -24,7 +24,7 @@ export function toUserDomain(dto: UserDTO): User {
 
 export function fromUserDomain(user: User): UserDTO {
   return {
-    primary_key: user.primaryKey,
+    id: user.id,
     user_id: user.userID,
     password: user.password,
     username: user.username,

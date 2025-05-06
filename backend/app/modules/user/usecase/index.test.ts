@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { JwtPayload, UserUseCase } from '.';
+import { UserUseCase } from '.';
 import UserRepository from '../repository';
 import User from '../domain';
 import jwt from 'jsonwebtoken';
 import config from '../../../config';
+import { JwtPayload } from '../../../middlewares/jwt';
 
 describe('UserService', () => {
   let userService: UserUseCase;
@@ -24,7 +25,7 @@ describe('UserService', () => {
   describe('login', () => {
     it('should successfully login and return JWT token', async () => {
       vi.spyOn(mockUserRepository, 'findByUsername').mockResolvedValue({
-        primary_key: 1,
+        id: 1,
         user_id: 'user1',
         password: User.makePasswordFromText('Abc123'),
         username: 'testuser',
@@ -58,7 +59,7 @@ describe('UserService', () => {
 
     it('should throw error when password does not match', async () => {
       vi.spyOn(mockUserRepository, 'findByUsername').mockResolvedValue({
-        primary_key: 1,
+        id: 1,
         user_id: 'user1',
         password: User.makePasswordFromText('Abc123'),
         username: 'testuser',
@@ -147,14 +148,14 @@ describe('UserService', () => {
   describe('change password', () => {
     it('should changes the password if password requirement is satisfied', async () => {
       vi.spyOn(mockUserRepository, 'findByUserID').mockResolvedValue({
-        primary_key: 1,
+        id: 1,
         user_id: 'user1',
         password: 'XAc123',
         username: 'foo',
       });
 
       vi.spyOn(mockUserRepository, 'updateByUserID').mockResolvedValue({
-        primary_key: 1,
+        id: 1,
         user_id: 'user1',
         password: '123ACx',
         username: 'foo',
@@ -167,7 +168,7 @@ describe('UserService', () => {
 
     it('should throw an error if password requirement is not satisfied', async () => {
       vi.spyOn(mockUserRepository, 'findByUserID').mockResolvedValue({
-        primary_key: 1,
+        id: 1,
         user_id: 'user1',
         password: 'XAc123',
         username: 'foo',
