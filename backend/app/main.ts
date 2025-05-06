@@ -1,17 +1,13 @@
 import express from 'express';
 import config from './config';
-import UserHandlers from './modules/user/http/handlers';
 import PostgresUserRepository from './modules/user/repository/pg';
 import { Pool } from 'pg';
-import { UserUseCase } from './modules/user/usecase';
 import { errorHandler } from './middlewares/errors';
 import PostgresTaskRepository from './modules/task/repository/pg';
-import TaskUseCase from './modules/task/usecase';
 import PostgresProjectRepository from './modules/project/repository/pg';
-import TaskHandlers from './modules/task/handlers';
-import { jwtMiddleware } from './middlewares/jwt';
-import ProjectUseCase from './modules/project/usecase';
-import ProjectHandlers from './modules/project/handlers';
+import UserModule from './modules/user';
+import TaskModule from './modules/task';
+import ProjectModule from './modules/project';
 
 const app = express();
 app.use(express.json());
@@ -27,42 +23,17 @@ const pool = new Pool({
 });
 
 const userRepository = new PostgresUserRepository(pool);
-const userUseCase = new UserUseCase(userRepository);
-const userHandlers = new UserHandlers(userUseCase);
-
 const taskRepository = new PostgresTaskRepository(pool);
 const projectRepository = new PostgresProjectRepository(pool);
-const taskUseCase = new TaskUseCase(taskRepository, projectRepository);
-const taskHandlers = new TaskHandlers(taskUseCase);
 
-const projectUseCase = new ProjectUseCase(projectRepository);
-const projectHandlers = new ProjectHandlers(projectUseCase);
+const userModule = new UserModule(userRepository);
+const taskModule = new TaskModule(taskRepository, projectRepository);
+const projectModule = new ProjectModule(projectRepository);
 
 const apiRoutes = express.Router();
-apiRoutes.post('/login', userHandlers.login.bind(userHandlers));
-apiRoutes.post('/register', userHandlers.register.bind(userHandlers));
-
-const tasksRoutes = express.Router();
-tasksRoutes.use(jwtMiddleware);
-tasksRoutes.get('/', taskHandlers.getTasks.bind(taskHandlers));
-tasksRoutes.post('/', taskHandlers.createTask.bind(taskHandlers));
-tasksRoutes.put('/:task_id', taskHandlers.editTask.bind(taskHandlers));
-tasksRoutes.delete('/:task_id', taskHandlers.deleteTask.bind(taskHandlers));
-apiRoutes.use('/tasks', tasksRoutes);
-
-const projectsRoutes = express.Router();
-projectsRoutes.use(jwtMiddleware);
-projectsRoutes.get('/', projectHandlers.getProjects.bind(projectHandlers));
-projectsRoutes.post('/', projectHandlers.createProject.bind(projectHandlers));
-projectsRoutes.put(
-  '/:project_id',
-  projectHandlers.editProject.bind(projectHandlers),
-);
-projectsRoutes.delete(
-  '/:project_id',
-  projectHandlers.deleteProject.bind(projectHandlers),
-);
-apiRoutes.use('/projects', projectsRoutes);
+apiRoutes.use('/', userModule.router());
+apiRoutes.use('/tasks', taskModule.router());
+apiRoutes.use('/projects', projectModule.router());
 
 app.use('/api', apiRoutes);
 app.use(errorHandler);
