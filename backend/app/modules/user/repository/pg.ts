@@ -147,7 +147,7 @@ class PostgresUserRepository implements UserRepository {
     }
   }
 
-  async createUser(arg: UserDTO): Promise<number> {
+  async createUser(arg: UserDTO): Promise<string> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(

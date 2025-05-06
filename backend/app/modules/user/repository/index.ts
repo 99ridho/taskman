@@ -5,6 +5,6 @@ export default interface UserRepository {
   findByUsername(username: string): Promise<UserDTO>;
   deleteByUserID(userID: string): Promise<boolean>;
   updateByUserID(userID: string, arg: UserDTO): Promise<UserDTO>;
-  createUser(arg: UserDTO): Promise<number>;
+  createUser(arg: UserDTO): Promise<string>;
   countByUsername(username: string): Promise<number>;
 }

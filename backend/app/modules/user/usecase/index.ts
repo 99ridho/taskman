@@ -75,7 +75,7 @@ export class UserUseCase {
   async registerUser(params: {
     username: string;
     password: string;
-  }): Promise<number> {
+  }): Promise<string> {
     try {
       const schema = z.object({
         username: z.string().nonempty('username is required'),

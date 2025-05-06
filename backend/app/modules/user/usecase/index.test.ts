@@ -94,14 +94,14 @@ describe('UserService', () => {
   describe('register', () => {
     it('should create a new user', async () => {
       vi.spyOn(mockUserRepository, 'countByUsername').mockResolvedValue(0);
-      vi.spyOn(mockUserRepository, 'createUser').mockResolvedValue(1);
+      vi.spyOn(mockUserRepository, 'createUser').mockResolvedValue('1ABC');
 
       await expect(
         userService.registerUser({
           username: 'abc123',
           password: 'Abc123',
         }),
-      ).resolves.toBe(1);
+      ).resolves.toBe('1ABC');
     });
 
     it('should throw error due to unsatisfied password requirement', async () => {
