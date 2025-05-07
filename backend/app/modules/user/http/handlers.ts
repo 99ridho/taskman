@@ -29,4 +29,24 @@ export default class UserHandlers {
       throw err;
     }
   }
+
+  async getProfile(req: Request, res: Response) {
+    try {
+      if (req.user?.user_id) {
+        const profile = await this.useCase.getProfile(req.user?.user_id);
+        res.status(200).json({
+          data: {
+            user_id: profile.user_id,
+            username: profile.username,
+            created_at: profile.created_at,
+          },
+        });
+        return;
+      }
+
+      res.status(204).json(null);
+    } catch (err) {
+      throw err;
+    }
+  }
 }

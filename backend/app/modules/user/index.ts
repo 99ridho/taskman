@@ -1,3 +1,4 @@
+import { jwtMiddleware } from '../../middlewares/jwt';
 import UserHandlers from './http/handlers';
 import UserRepository from './repository';
 import { UserUseCase } from './usecase';
@@ -18,6 +19,11 @@ export default class UserModule {
     router.post(
       '/register',
       this.userHandlers.register.bind(this.userHandlers),
+    );
+    router.get(
+      '/profile',
+      jwtMiddleware,
+      this.userHandlers.getProfile.bind(this.userHandlers),
     );
 
     return router;

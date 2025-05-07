@@ -1,7 +1,7 @@
 import { z, ZodError } from 'zod';
 import { GeneralError } from '../../../error';
 import User from '../domain';
-import { fromUserDomain, toUserDomain } from '../dto';
+import { fromUserDomain, toUserDomain, UserDTO } from '../dto';
 import UserRepository from '../repository';
 import jwt from 'jsonwebtoken';
 import config from '../../../config';
@@ -131,6 +131,24 @@ export class UserUseCase {
       await this.repository.updateByUserID(userID, fromUserDomain(userDomain));
 
       return true;
+    } catch (err) {
+      let error: GeneralError = {
+        name: 'user usecase error',
+        message: (err as Error).message,
+        payload: {
+          user_id: userID,
+        },
+        errorType: (err as GeneralError).errorType,
+        details: (err as GeneralError).details,
+      };
+
+      throw error;
+    }
+  }
+
+  async getProfile(userID: string): Promise<UserDTO> {
+    try {
+      return await this.repository.findByUserID(userID);
     } catch (err) {
       let error: GeneralError = {
         name: 'user usecase error',

@@ -36,6 +36,7 @@ export function jwtMiddleware(req: Request, res: Response, next: NextFunction) {
       errorType: 'UNAUTHORIZED',
       name: 'authentication error',
       message: 'authentication error, token apparently invalid',
+      token: token,
     } as GeneralError;
   }
 }
