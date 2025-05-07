@@ -8,9 +8,11 @@ import PostgresProjectRepository from './modules/project/repository/pg';
 import UserModule from './modules/user';
 import TaskModule from './modules/task';
 import ProjectModule from './modules/project';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const pool = new Pool({
   database: config.dbName,
