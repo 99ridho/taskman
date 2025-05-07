@@ -18,10 +18,11 @@ export default class TaskUseCase {
 
   async assignTaskToProject(
     taskID: string,
+    ownerID: number,
     projectID: string,
   ): Promise<boolean> {
     try {
-      const taskDto = await this.repository.findTaskByTaskID(taskID);
+      const taskDto = await this.repository.findTaskByTaskID(taskID, ownerID);
       const taskDomain = toTaskDomain(taskDto);
 
       const project =
@@ -31,6 +32,7 @@ export default class TaskUseCase {
 
       await this.repository.updateTaskByTaskID(
         taskID,
+        ownerID,
         fromTaskDomain(taskDomain),
       );
 
@@ -51,10 +53,11 @@ export default class TaskUseCase {
 
   async changeTaskCompletionStatus(
     taskID: string,
+    ownerID: number,
     isCompleted: boolean,
   ): Promise<boolean> {
     try {
-      const taskDto = await this.repository.findTaskByTaskID(taskID);
+      const taskDto = await this.repository.findTaskByTaskID(taskID, ownerID);
       const taskDomain = toTaskDomain(taskDto);
 
       if (isCompleted) {
@@ -65,6 +68,7 @@ export default class TaskUseCase {
 
       await this.repository.updateTaskByTaskID(
         taskID,
+        ownerID,
         fromTaskDomain(taskDomain),
       );
 
@@ -85,6 +89,7 @@ export default class TaskUseCase {
 
   async editTask(
     taskID: string,
+    ownerID: number,
     arg: {
       title: string;
       description: string;
@@ -93,13 +98,14 @@ export default class TaskUseCase {
     },
   ): Promise<TaskDTO> {
     try {
-      const taskDto = await this.repository.findTaskByTaskID(taskID);
+      const taskDto = await this.repository.findTaskByTaskID(taskID, ownerID);
       const taskDomain = toTaskDomain(taskDto);
 
       taskDomain.editTask({ ...arg });
 
       return await this.repository.updateTaskByTaskID(
         taskID,
+        ownerID,
         fromTaskDomain(taskDomain),
       );
     } catch (err) {
@@ -142,6 +148,7 @@ export default class TaskUseCase {
   }
 
   async getTasks(
+    ownerID: number,
     page: number,
     pageSize: number,
     sortBy: 'DUE_DATE' | 'PRIORITY' | '',
@@ -158,6 +165,7 @@ export default class TaskUseCase {
   }> {
     try {
       const [tasks, totalRecords] = await this.repository.findAllTasks(
+        ownerID,
         pageSize,
         (page - 1) * pageSize,
       );
@@ -214,9 +222,9 @@ export default class TaskUseCase {
     }
   }
 
-  async deleteTask(taskID: string): Promise<boolean> {
+  async deleteTask(taskID: string, ownerID: number): Promise<boolean> {
     try {
-      return await this.repository.deleteTaskByTaskID(taskID);
+      return await this.repository.deleteTaskByTaskID(taskID, ownerID);
     } catch (err) {
       throw {
         errorType: (err as GeneralError).errorType,

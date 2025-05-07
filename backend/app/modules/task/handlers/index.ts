@@ -36,9 +36,13 @@ export default class TaskHandlers {
 
       switch (body.action) {
         case 'UPDATE': {
-          const updatedTask = await this.useCase.editTask(req.params.task_id, {
-            ...body.data,
-          });
+          const updatedTask = await this.useCase.editTask(
+            req.params.task_id,
+            req.user?.id ?? 0,
+            {
+              ...body.data,
+            },
+          );
 
           res.status(200).json({
             data: updatedTask,
@@ -48,6 +52,7 @@ export default class TaskHandlers {
         case 'MARK_COMPLETED': {
           const ok = await this.useCase.changeTaskCompletionStatus(
             req.params.task_id,
+            req.user?.id ?? 0,
             true,
           );
 
@@ -59,6 +64,7 @@ export default class TaskHandlers {
         case 'MARK_INCOMPLETE': {
           const ok = await this.useCase.changeTaskCompletionStatus(
             req.params.task_id,
+            req.user?.id ?? 0,
             false,
           );
 
@@ -70,6 +76,7 @@ export default class TaskHandlers {
         case 'ASSIGN_PROJECT': {
           const ok = await this.useCase.assignTaskToProject(
             req.params.task_id,
+            req.user?.id ?? 0,
             body.data.project_id,
           );
 
@@ -97,6 +104,7 @@ export default class TaskHandlers {
       const page = req.query.page as string;
       const pageSize = req.query.page_size as string;
       const result = await this.useCase.getTasks(
+        req.user?.id ?? 0,
         parseInt(page),
         parseInt(pageSize),
         (req.query.sort_by as 'DUE_DATE' | 'PRIORITY' | '') ?? '',
@@ -112,7 +120,10 @@ export default class TaskHandlers {
 
   async deleteTask(req: Request, res: Response) {
     try {
-      const result = await this.useCase.deleteTask(req.params.task_id);
+      const result = await this.useCase.deleteTask(
+        req.params.task_id,
+        req.user?.id ?? 0,
+      );
       res.status(200).json({
         data: result,
       });

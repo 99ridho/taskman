@@ -65,10 +65,17 @@ describe('TaskUseCase', () => {
         project_id: 1,
       });
 
-      const result = await taskUseCase.assignTaskToProject(taskID, projectID);
+      const result = await taskUseCase.assignTaskToProject(
+        taskID,
+        1,
+        projectID,
+      );
 
       expect(result).toBe(true);
-      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(taskID);
+      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(
+        taskID,
+        1,
+      );
       expect(mockProjectRepository.findProjectByProjectID).toHaveBeenCalledWith(
         projectID,
       );
@@ -83,7 +90,7 @@ describe('TaskUseCase', () => {
       vi.spyOn(mockTaskRepository, 'findTaskByTaskID').mockRejectedValue(error);
 
       await expect(
-        taskUseCase.assignTaskToProject(taskID, projectID),
+        taskUseCase.assignTaskToProject(taskID, 1, projectID),
       ).rejects.toMatchObject({
         name: 'task use case error',
         message: 'Task not found',
@@ -117,7 +124,7 @@ describe('TaskUseCase', () => {
       ).mockRejectedValue(error);
 
       await expect(
-        taskUseCase.assignTaskToProject(taskID, projectID),
+        taskUseCase.assignTaskToProject(taskID, 1, projectID),
       ).rejects.toMatchObject({
         name: 'task use case error',
         message: 'Project not found',
@@ -149,10 +156,17 @@ describe('TaskUseCase', () => {
         is_completed: true,
       });
 
-      const result = await taskUseCase.changeTaskCompletionStatus(taskID, true);
+      const result = await taskUseCase.changeTaskCompletionStatus(
+        taskID,
+        1,
+        true,
+      );
 
       expect(result).toBe(true);
-      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(taskID);
+      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(
+        taskID,
+        1,
+      );
       expect(mockTaskRepository.updateTaskByTaskID).toHaveBeenCalled();
     });
 
@@ -177,11 +191,15 @@ describe('TaskUseCase', () => {
 
       const result = await taskUseCase.changeTaskCompletionStatus(
         taskID,
+        1,
         false,
       );
 
       expect(result).toBe(true);
-      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(taskID);
+      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(
+        taskID,
+        1,
+      );
       expect(mockTaskRepository.updateTaskByTaskID).toHaveBeenCalled();
     });
 
@@ -192,7 +210,7 @@ describe('TaskUseCase', () => {
       vi.spyOn(mockTaskRepository, 'findTaskByTaskID').mockRejectedValue(error);
 
       await expect(
-        taskUseCase.changeTaskCompletionStatus(taskID, true),
+        taskUseCase.changeTaskCompletionStatus(taskID, 1, true),
       ).rejects.toMatchObject({
         name: 'task use case error',
         message: 'Task not found',
@@ -236,7 +254,7 @@ describe('TaskUseCase', () => {
         due_date: new Date(updateData.due_date),
       });
 
-      const result = await taskUseCase.editTask(taskID, updateData);
+      const result = await taskUseCase.editTask(taskID, 1, updateData);
 
       expect(result).toMatchObject({
         task_id: taskID,
@@ -244,7 +262,10 @@ describe('TaskUseCase', () => {
         description: updateData.description,
         priority: updateData.priority,
       });
-      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(taskID);
+      expect(mockTaskRepository.findTaskByTaskID).toHaveBeenCalledWith(
+        taskID,
+        1,
+      );
       expect(mockTaskRepository.updateTaskByTaskID).toHaveBeenCalled();
     });
 
@@ -261,7 +282,7 @@ describe('TaskUseCase', () => {
       vi.spyOn(mockTaskRepository, 'findTaskByTaskID').mockRejectedValue(error);
 
       await expect(
-        taskUseCase.editTask(taskID, updateData),
+        taskUseCase.editTask(taskID, 1, updateData),
       ).rejects.toMatchObject({
         name: 'task use case error',
         message: 'Task not found',

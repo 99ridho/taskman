@@ -10,11 +10,11 @@ export default class PostgresTaskRepository implements TaskRepository {
     this.pool = pool;
   }
 
-  async findTaskByTaskID(taskID: string): Promise<TaskDTO> {
+  async findTaskByTaskID(taskID: string, ownerID: number): Promise<TaskDTO> {
     try {
       const result = await this.pool.query(
-        'select * from tasks where task_id = $1 and deleted_at is null',
-        [taskID],
+        'select * from tasks where task_id = $1 and deleted_at is null and belongs_to = $2',
+        [taskID, ownerID],
       );
 
       if (result.rows.length == 0) {
@@ -59,13 +59,14 @@ export default class PostgresTaskRepository implements TaskRepository {
   }
 
   async findAllTasks(
+    ownerID: number,
     limit: number,
     offset: number,
   ): Promise<[TaskDTO[], number]> {
     try {
       const result = await this.pool.query(
-        'select * from tasks where deleted_at is null limit $1 offset $2',
-        [limit, offset],
+        'select * from tasks where deleted_at is null and belongs_to = $1 limit $2 offset $3',
+        [ownerID, limit, offset],
       );
 
       const tasks = result.rows.map((task) => {
@@ -86,7 +87,8 @@ export default class PostgresTaskRepository implements TaskRepository {
       });
 
       const totalRecordsResult = await this.pool.query(
-        'select count(id)::int as cnt from tasks where deleted_at is null',
+        'select count(id)::int as cnt from tasks where deleted_at is null and belongs_to = $1',
+        [ownerID],
       );
 
       return [tasks, totalRecordsResult.rows[0].cnt as number];
@@ -103,7 +105,11 @@ export default class PostgresTaskRepository implements TaskRepository {
     }
   }
 
-  async updateTaskByTaskID(taskID: string, arg: TaskDTO): Promise<TaskDTO> {
+  async updateTaskByTaskID(
+    taskID: string,
+    ownerID: number,
+    arg: TaskDTO,
+  ): Promise<TaskDTO> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(
@@ -118,7 +124,7 @@ export default class PostgresTaskRepository implements TaskRepository {
           priority = $6,
           due_date = $7
         where
-          task_id = $1
+          task_id = $1 AND belongs_to = $8
         returning *`,
         [
           taskID,
@@ -128,6 +134,7 @@ export default class PostgresTaskRepository implements TaskRepository {
           arg.description,
           arg.priority,
           arg.due_date,
+          ownerID,
         ],
       );
 
@@ -173,12 +180,12 @@ export default class PostgresTaskRepository implements TaskRepository {
     }
   }
 
-  async deleteTaskByTaskID(taskID: string): Promise<boolean> {
+  async deleteTaskByTaskID(taskID: string, ownerID: number): Promise<boolean> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(
-        'update tasks set deleted_at = NOW() where task_id = $1',
-        [taskID],
+        'update tasks set deleted_at = NOW() where task_id = $1 and belongs_to = $2',
+        [taskID, ownerID],
       );
 
       if (result.rowCount == 0) {
