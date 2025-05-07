@@ -1,4 +1,4 @@
-import { BaseResponse } from "@/response";
+import { BaseResponse } from "@/lib/http/response";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 

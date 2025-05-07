@@ -1,7 +1,7 @@
 "use server";
 
 import { login, setToken } from "@/lib/auth";
-import { BaseResponse } from "@/response";
+import { BaseResponse } from "@/lib/http/response";
 
 interface LoginCredentials {
   username: string;
