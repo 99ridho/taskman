@@ -48,6 +48,7 @@ export default class TaskUseCase {
         payload: {
           task_id: taskID,
           project_id: projectID,
+          ownerID: ownerID,
         },
       } as GeneralError;
     }

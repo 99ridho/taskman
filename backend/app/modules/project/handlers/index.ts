@@ -69,4 +69,24 @@ export default class ProjectHandlers {
       throw err;
     }
   }
+
+  async getTasks(req: Request, res: Response) {
+    try {
+      const page = req.query.page as string;
+      const pageSize = req.query.page_size as string;
+      const result = await this.useCase.getTasks(
+        req.params.project_id,
+        req.user?.id ?? 0,
+        parseInt(page),
+        parseInt(pageSize),
+        (req.query.sort_by as 'DUE_DATE' | 'PRIORITY' | '') ?? '',
+        (req.query.sort_type as 'ASC' | 'DESC' | '') ?? '',
+        (req.query.status as 'COMPLETED' | 'INCOMPLETE' | '') ?? '',
+      );
+
+      res.status(200).json(result);
+    } catch (err) {
+      throw err;
+    }
+  }
 }

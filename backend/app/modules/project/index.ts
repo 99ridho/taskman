@@ -26,6 +26,10 @@ export default class ProjectModule {
       '/:project_id',
       this.handlers.deleteProject.bind(this.handlers),
     );
+    projectsRoutes.get(
+      '/:project_id/tasks',
+      this.handlers.getTasks.bind(this.handlers),
+    );
 
     return projectsRoutes;
   }

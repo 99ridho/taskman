@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import ProjectRepository from '.';
 import { ProjectDTO } from '../dto';
 import { GeneralError } from '../../../error';
+import { TaskDTO } from '../../task/dto';
 
 export default class PostgresProjectRepository implements ProjectRepository {
   private pool: Pool;
@@ -239,6 +240,54 @@ export default class PostgresProjectRepository implements ProjectRepository {
         name: 'postgres project repository error',
         payload: {
           arg: arg,
+        },
+      } as GeneralError;
+    }
+  }
+
+  async findAllTasksForProjectID(
+    projectID: number,
+    ownerID: number,
+    limit: number,
+    offset: number,
+  ): Promise<[TaskDTO[], number]> {
+    try {
+      const result = await this.pool.query(
+        'select * from tasks where deleted_at is null and project_id = $1 and belongs_to = $2 limit $3 offset $4',
+        [projectID, ownerID, limit, offset],
+      );
+
+      const tasks = result.rows.map((task) => {
+        return {
+          description: task.description,
+          is_completed: task.is_completed,
+          id: task.id,
+          priority: task.priority,
+          task_id: task.task_id,
+          title: task.title,
+          created_at: task.created_at,
+          deleted_at: task.deleted_at,
+          due_date: task.due_date,
+          owner_id: task.belongs_to,
+          project_id: task.project_id,
+          updated_at: task.updated_at,
+        };
+      });
+
+      const totalRecordsResult = await this.pool.query(
+        'select count(id)::int as cnt from tasks where deleted_at is null and project_id = $1 and belongs_to = $2',
+        [projectID, ownerID],
+      );
+
+      return [tasks, totalRecordsResult.rows[0].cnt as number];
+    } catch (err) {
+      throw {
+        errorType: 'SERVER_ERROR',
+        message: (err as Error).message,
+        name: 'postgres task repository error',
+        payload: {
+          limit: limit,
+          offset: offset,
         },
       } as GeneralError;
     }

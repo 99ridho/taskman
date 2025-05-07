@@ -1,3 +1,4 @@
+import { TaskDTO } from '../../task/dto';
 import { ProjectDTO } from '../dto';
 
 export default interface ProjectRepository {
@@ -21,4 +22,10 @@ export default interface ProjectRepository {
     ownerID: number,
   ): Promise<boolean>;
   createProject(arg: ProjectDTO): Promise<string>;
+  findAllTasksForProjectID(
+    projectID: number,
+    ownerID: number,
+    limit: number,
+    offset: number,
+  ): Promise<[TaskDTO[], number]>;
 }
