@@ -78,6 +78,7 @@ describe('TaskUseCase', () => {
       );
       expect(mockProjectRepository.findProjectByProjectID).toHaveBeenCalledWith(
         projectID,
+        1,
       );
       expect(mockTaskRepository.updateTaskByTaskID).toHaveBeenCalled();
     });

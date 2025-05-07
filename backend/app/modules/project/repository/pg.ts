@@ -10,11 +10,14 @@ export default class PostgresProjectRepository implements ProjectRepository {
     this.pool = pool;
   }
 
-  async findProjectByProjectID(projectID: string): Promise<ProjectDTO> {
+  async findProjectByProjectID(
+    projectID: string,
+    ownerID: number,
+  ): Promise<ProjectDTO> {
     try {
       const query =
-        'SELECT * FROM projects WHERE project_id = $1 AND deleted_at IS NULL';
-      const values = [projectID];
+        'SELECT * FROM projects WHERE project_id = $1 AND deleted_at IS NULL AND belongs_to = $2';
+      const values = [projectID, ownerID];
       const result = await this.pool.query(query, values);
 
       if (result.rows.length === 0) {
@@ -53,11 +56,11 @@ export default class PostgresProjectRepository implements ProjectRepository {
     }
   }
 
-  async findProjectByID(id: number): Promise<ProjectDTO> {
+  async findProjectByID(id: number, ownerID: number): Promise<ProjectDTO> {
     try {
       const query =
-        'SELECT * FROM projects WHERE id = $1 AND deleted_at IS NULL';
-      const values = [id];
+        'SELECT * FROM projects WHERE id = $1 AND deleted_at IS NULL AND belongs_to = $2';
+      const values = [id, ownerID];
       const result = await this.pool.query(query, values);
 
       if (result.rows.length === 0) {
@@ -97,17 +100,19 @@ export default class PostgresProjectRepository implements ProjectRepository {
   }
 
   async findAllProjects(
+    ownerID: number,
     limit: number,
     offset: number,
   ): Promise<[ProjectDTO[], number]> {
     try {
       const query =
-        'SELECT * FROM projects WHERE deleted_at IS NULL ORDER BY id LIMIT $1 OFFSET $2';
-      const values = [limit, offset];
+        'SELECT * FROM projects WHERE deleted_at IS NULL AND belongs_to = $3 ORDER BY id LIMIT $1 OFFSET $2';
+      const values = [limit, offset, ownerID];
       const result = await this.pool.query(query, values);
 
       const totalRecordsResult = await this.pool.query(
-        'select count(id)::int as cnt from projects where deleted_at is null',
+        'select count(id)::int as cnt from projects where deleted_at is null and belongs_to = $1',
+        [ownerID],
       );
 
       const data = result.rows.map((proj) => {
@@ -139,16 +144,17 @@ export default class PostgresProjectRepository implements ProjectRepository {
 
   async updateProjectByProjectID(
     projectID: string,
+    ownerID: number,
     arg: ProjectDTO,
   ): Promise<ProjectDTO> {
     try {
       const query = `
       UPDATE projects 
       SET title = $1, description = $2, updated_at = NOW()
-      WHERE project_id = $3
+      WHERE project_id = $3 AND belongs_to = $4
       RETURNING *
     `;
-      const values = [arg.title, arg.description, projectID];
+      const values = [arg.title, arg.description, projectID, ownerID];
       const result = await this.pool.query(query, values);
 
       if (result.rows.length === 0) {
@@ -188,15 +194,18 @@ export default class PostgresProjectRepository implements ProjectRepository {
     }
   }
 
-  async deleteProjectByProjectID(projectID: string): Promise<boolean> {
+  async deleteProjectByProjectID(
+    projectID: string,
+    ownerID: number,
+  ): Promise<boolean> {
     try {
       const query = `
       UPDATE projects 
       SET deleted_at = NOW() 
-      WHERE project_id = $1
+      WHERE project_id = $1 AND belongs_to = $2
       RETURNING id
     `;
-      const values = [projectID];
+      const values = [projectID, ownerID];
       const result = await this.pool.query(query, values);
 
       return result.rows.length > 0;

@@ -25,8 +25,10 @@ export default class TaskUseCase {
       const taskDto = await this.repository.findTaskByTaskID(taskID, ownerID);
       const taskDomain = toTaskDomain(taskDto);
 
-      const project =
-        await this.projectRepository.findProjectByProjectID(projectID);
+      const project = await this.projectRepository.findProjectByProjectID(
+        projectID,
+        ownerID,
+      );
 
       taskDomain.assignToProject(toProjectDomain(project));
 

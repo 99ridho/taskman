@@ -27,6 +27,7 @@ export default class ProjectHandlers {
       const page = req.query.page as string;
       const pageSize = req.query.page_size as string;
       const result = await this.useCase.getProjects(
+        req.user?.id ?? 0,
         parseInt(page),
         parseInt(pageSize),
       );
@@ -39,7 +40,10 @@ export default class ProjectHandlers {
 
   async deleteProject(req: Request, res: Response) {
     try {
-      const result = await this.useCase.deleteProject(req.params.project_id);
+      const result = await this.useCase.deleteProject(
+        req.params.project_id,
+        req.user?.id ?? 0,
+      );
       res.status(200).json({
         data: result,
       });
@@ -52,6 +56,7 @@ export default class ProjectHandlers {
     try {
       const updatedTask = await this.useCase.editProject(
         req.params.project_id,
+        req.user?.id ?? 0,
         {
           ...req.body,
         },

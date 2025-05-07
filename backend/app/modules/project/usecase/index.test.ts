@@ -98,12 +98,13 @@ describe('ProjectUseCase', () => {
         owner_id: 1,
       });
 
-      await useCase.editProject(projectId, updates);
+      await useCase.editProject(projectId, 1, updates);
 
       expect(
         mockProjectRepository.updateProjectByProjectID,
       ).toHaveBeenCalledWith(
         projectId,
+        1,
         expect.objectContaining({
           title: updates.title,
           description: updates.description,
@@ -118,7 +119,7 @@ describe('ProjectUseCase', () => {
       ).mockRejectedValue(new Error('not found'));
 
       await expect(
-        useCase.editProject('invalid-id', {
+        useCase.editProject('invalid-id', 1, {
           title: 'New Title',
           description: 'New Description',
         }),
@@ -147,11 +148,11 @@ describe('ProjectUseCase', () => {
         'deleteProjectByProjectID',
       ).mockResolvedValue(true);
 
-      await useCase.deleteProject(projectId);
+      await useCase.deleteProject(projectId, 1);
 
       expect(
         mockProjectRepository.deleteProjectByProjectID,
-      ).toHaveBeenCalledWith(projectId);
+      ).toHaveBeenCalledWith(projectId, 1);
     });
 
     it('should throw error when trying to delete non-existent project', async () => {
@@ -160,7 +161,7 @@ describe('ProjectUseCase', () => {
         'deleteProjectByProjectID',
       ).mockRejectedValue(new Error('not found'));
 
-      await expect(useCase.deleteProject('invalid-id')).rejects.toThrowError(
+      await expect(useCase.deleteProject('invalid-id', 1)).rejects.toThrowError(
         'not found',
       );
     });

@@ -34,17 +34,21 @@ export default class ProjectUseCase {
 
   async editProject(
     projectID: string,
+    ownerID: number,
     params: { title: string; description: string },
   ): Promise<ProjectDTO> {
     try {
-      const projectDto =
-        await this.repository.findProjectByProjectID(projectID);
+      const projectDto = await this.repository.findProjectByProjectID(
+        projectID,
+        ownerID,
+      );
       const project = toProjectDomain(projectDto);
 
       project.editProject({ ...params });
 
       const updatedProject = await this.repository.updateProjectByProjectID(
         projectID,
+        ownerID,
         fromProjectDomain(project),
       );
 
@@ -63,9 +67,9 @@ export default class ProjectUseCase {
     }
   }
 
-  async deleteProject(projectID: string): Promise<boolean> {
+  async deleteProject(projectID: string, ownerID: number): Promise<boolean> {
     try {
-      return await this.repository.deleteProjectByProjectID(projectID);
+      return await this.repository.deleteProjectByProjectID(projectID, ownerID);
     } catch (err) {
       throw {
         errorType: (err as GeneralError).errorType,
@@ -80,6 +84,7 @@ export default class ProjectUseCase {
   }
 
   async getProjects(
+    ownerID: number,
     page: number,
     pageSize: number,
   ): Promise<{
@@ -93,6 +98,7 @@ export default class ProjectUseCase {
   }> {
     try {
       const [tasks, totalRecords] = await this.repository.findAllProjects(
+        ownerID,
         pageSize,
         (page - 1) * pageSize,
       );
