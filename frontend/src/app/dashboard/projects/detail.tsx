@@ -24,6 +24,15 @@ import Loading from "@/components/ui/loading";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { ArrowUpDown } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ProjectDetailDialog = ({ project }: { project: Project }) => {
   const [detailOpened, setDetailOpened] = useState(false);
@@ -96,13 +105,41 @@ const ProjectDetailDialog = ({ project }: { project: Project }) => {
       accessorKey: "priority",
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Priority
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex flex-col items-center justify-items-stretch mb-2">
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Priority
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+            <Select
+              onValueChange={(val) => {
+                if (val === "0") {
+                  column.setFilterValue(undefined);
+                  return;
+                }
+
+                column.setFilterValue(val);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Priority</SelectLabel>
+                  <SelectItem value="0">All</SelectItem>
+                  <SelectItem value="1">Low</SelectItem>
+                  <SelectItem value="2">Medium</SelectItem>
+                  <SelectItem value="3">High</SelectItem>
+                  <SelectItem value="4">Critical</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         );
       },
       cell: ({ row }) => {
@@ -113,13 +150,39 @@ const ProjectDetailDialog = ({ project }: { project: Project }) => {
       accessorKey: "is_completed",
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Is Completed?
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex flex-col items-center justify-items-stretch mb-2">
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Is Completed?
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+            <Select
+              onValueChange={(val) => {
+                if (val === "all") {
+                  column.setFilterValue(undefined);
+                  return;
+                }
+
+                column.setFilterValue(val === "true");
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Is Completed</SelectLabel>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="true">✅</SelectItem>
+                  <SelectItem value="false">❌</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         );
       },
       cell: ({ row }) => {
