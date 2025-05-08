@@ -39,7 +39,12 @@ export default function LoginContent({ message }: { message: string }) {
           <CardContent className="space-y-4">
             {!actionState.success && actionState.error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                {actionState.error}
+                <p>{actionState.error.message}</p>
+                <ul>
+                  {actionState.error.details?.map((detail, idx) => (
+                    <p key={idx}>{detail}</p>
+                  ))}
+                </ul>
               </div>
             )}
             {message === "register-success" && (
