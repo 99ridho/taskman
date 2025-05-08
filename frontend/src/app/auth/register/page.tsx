@@ -55,7 +55,12 @@ export default function RegisterPage() {
           <form action={formAction} className="space-y-4">
             {!actionState.success && actionState.error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                {actionState.error}
+                <p>{actionState.error.message}</p>
+                <ul>
+                  {actionState.error.details?.map((detail, idx) => (
+                    <p key={idx}>{detail}</p>
+                  ))}
+                </ul>
               </div>
             )}
             <div className="space-y-2">
@@ -72,6 +77,9 @@ export default function RegisterPage() {
                 onChange={handlePasswordChange}
                 required
               />
+              <Label className="text-[12px] text-gray-500">
+                Password at least must contains uppercase, lowercase and number.
+              </Label>
             </div>
             <div className="space-y-2">
               <Label htmlFor="repeatPassword">Repeat Password</Label>

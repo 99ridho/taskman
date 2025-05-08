@@ -10,7 +10,10 @@ interface LoginCredentials {
 
 interface LoginActionState {
   success: boolean;
-  error?: string;
+  error?: {
+    details?: string[];
+    message: string;
+  };
 }
 
 export async function loginAction(
@@ -25,7 +28,15 @@ export async function loginAction(
 
     const res: BaseResponse<string> = await login(credentials);
     if (!res.data && res.error) {
-      return { success: false, error: `Login failed: ${res.error.message}` };
+      return {
+        success: false,
+        error: {
+          message: res.error.message,
+          details: res.error.details.map(
+            (d) => `${JSON.stringify(d.path)} - ${d.message}`
+          ),
+        },
+      };
     }
 
     if (res.data) {
@@ -34,6 +45,12 @@ export async function loginAction(
 
     return { success: true };
   } catch (error) {
-    return { error: (error as Error).message, success: false };
+    return {
+      error: {
+        message: "Error occured",
+        details: [(error as Error).message],
+      },
+      success: false,
+    };
   }
 }

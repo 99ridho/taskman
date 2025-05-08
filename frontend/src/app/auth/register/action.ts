@@ -10,7 +10,10 @@ interface RegisterCredentials {
 
 interface RegisterActionState {
   success: boolean;
-  error?: string;
+  error?: {
+    details?: string[];
+    message: string;
+  };
 }
 
 export async function registerAction(
@@ -25,11 +28,25 @@ export async function registerAction(
 
     const res: BaseResponse<string> = await register(credentials);
     if (!res.data && res.error) {
-      return { success: false, error: `Login failed: ${res.error.message}` };
+      return {
+        success: false,
+        error: {
+          message: res.error.message,
+          details: res.error.details.map(
+            (d) => `${JSON.stringify(d.path)} - ${d.message}`
+          ),
+        },
+      };
     }
 
     return { success: true };
-  } catch (error) {
-    return { error: (error as Error).message, success: false };
+  } catch (err) {
+    return {
+      error: {
+        message: "Error occured",
+        details: [(err as Error).message],
+      },
+      success: false,
+    };
   }
 }
