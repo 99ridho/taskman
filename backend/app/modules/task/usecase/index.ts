@@ -98,6 +98,8 @@ export default class TaskUseCase {
       description: string;
       priority: TaskPriority;
       due_date: string;
+      project_id: number;
+      is_completed: boolean;
     },
   ): Promise<TaskDTO> {
     try {
@@ -131,6 +133,7 @@ export default class TaskUseCase {
     priority: TaskPriority;
     due_date: string;
     owner_id: number;
+    project_id: number;
   }): Promise<string> {
     try {
       const task = Task.createTask({ ...arg });

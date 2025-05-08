@@ -23,7 +23,7 @@ export const fromTaskDomain = (task: Task): TaskDTO => ({
   description: task.description,
   priority: task.priority,
   is_completed: task.isCompleted,
-  project_id: task.assignedProject?.id,
+  project_id: task.assignedProject?.id || task.projectID,
   due_date: task.dueDate,
   owner_id: task.ownerID,
   created_at: task.createdAt,
@@ -41,5 +41,6 @@ export const toTaskDomain = (dto: TaskDTO): Task => {
     dto.is_completed,
     dto.due_date,
     dto.owner_id,
+    dto.project_id,
   );
 };

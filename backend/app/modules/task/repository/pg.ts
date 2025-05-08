@@ -219,7 +219,7 @@ export default class PostgresTaskRepository implements TaskRepository {
     const client = await this.pool.connect();
     try {
       const result = await client.query(
-        'insert into tasks (task_id, title, description, priority, belongs_to, due_date) values ($1, $2, $3, $4, $5, $6) returning task_id',
+        'insert into tasks (task_id, title, description, priority, belongs_to, due_date, project_id) values ($1, $2, $3, $4, $5, $6, $7) returning task_id',
         [
           arg.task_id,
           arg.title,
@@ -227,6 +227,7 @@ export default class PostgresTaskRepository implements TaskRepository {
           arg.priority,
           arg.owner_id,
           arg.due_date,
+          arg.project_id,
         ],
       );
 

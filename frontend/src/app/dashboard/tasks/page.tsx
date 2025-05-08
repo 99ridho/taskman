@@ -3,21 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import ProjectDetailDialog from "./detail";
-import { PaginationInfo, Project } from "./types";
-import ProjectUpdateDialog from "./update";
-import ProjectDeleteDialog from "./delete";
-import ProjectCreateDialog from "./create";
-import { getProjects } from "./api";
+import TaskDetailDialog from "./detail";
+import { PaginationInfo, Task } from "./types";
+import TaskUpdateDialog from "./update";
+import TaskDeleteDialog from "./delete";
+import TaskCreateDialog from "./create";
+import { getTasks } from "./api";
 import { useAuth } from "../context";
 import Loading from "@/components/ui/loading";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
+import { getProjects } from "../projects/api";
+import { Project } from "../projects/types";
 
-export default function ProjectsPage() {
+export default function TasksPage() {
   const auth = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [paging, setPaging] = useState<PaginationInfo>({
     page: 0,
@@ -27,12 +30,27 @@ export default function ProjectsPage() {
   });
   const [loading, setLoading] = useState(true);
 
+  const projectMapping: Record<string, Project> = projects.reduce(
+    (acc, val) => {
+      acc[val.id] = val;
+      return acc;
+    },
+    {} as Record<string, Project>
+  );
+
+  const priorityMapping: Record<string, string> = {
+    "1": "Low",
+    "2": "Medium",
+    "3": "High",
+    "4": "Critical",
+  };
+
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const resp = await getProjects(page, 10, auth.token);
+      const resp = await getTasks(page, 10, auth.token);
       if (resp.data) {
-        setProjects(resp.data);
+        setTasks(resp.data);
       }
 
       if (resp.paging) {
@@ -45,20 +63,35 @@ export default function ProjectsPage() {
     }
   };
 
+  const fetchProjects = async () => {
+    try {
+      const resp = await getProjects(1, 1000, auth.token);
+      if (resp.data) {
+        setProjects(resp.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage]);
 
-  const projectColumns: ColumnDef<Project>[] = [
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const taskColumns: ColumnDef<Task>[] = [
     {
-      accessorKey: "project_id",
+      accessorKey: "task_id",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Project ID
+            Task ID
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -76,6 +109,57 @@ export default function ProjectsPage() {
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
+      },
+    },
+    {
+      accessorKey: "priority",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Priority
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return priorityMapping[row.getValue("priority") as string];
+      },
+    },
+    {
+      accessorKey: "is_completed",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Is Completed?
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return row.getValue("is_completed") === true ? "✅" : "❌";
+      },
+    },
+    {
+      accessorKey: "due_date",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Due Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return formatDate(row.getValue("due_date"));
       },
     },
     {
@@ -101,13 +185,17 @@ export default function ProjectsPage() {
       cell: ({ row }) => {
         return (
           <div className="space-x-4">
-            <ProjectDetailDialog project={row.original} />
-            <ProjectUpdateDialog
-              project={row.original}
+            <TaskDetailDialog
+              task={row.original}
+              getProjectDetail={(id) => projectMapping[id]}
+            />
+            <TaskUpdateDialog
+              task={row.original}
+              projects={projects}
               onSuccess={() => fetchData(currentPage)}
             />
-            <ProjectDeleteDialog
-              project={row.original}
+            <TaskDeleteDialog
+              task={row.original}
               onSuccess={() => fetchData(currentPage)}
             />
           </div>
@@ -119,15 +207,18 @@ export default function ProjectsPage() {
   return (
     <div className="p-8">
       <div className="flex flex-row justify-between">
-        <h1 className="text-3xl font-bold mb-6">Projects</h1>
-        <ProjectCreateDialog onSuccess={() => fetchData(currentPage)} />
+        <h1 className="text-3xl font-bold mb-6">Tasks</h1>
+        <TaskCreateDialog
+          onSuccess={() => fetchData(currentPage)}
+          projects={projects}
+        />
       </div>
 
       <div className="rounded-md border">
         {loading ? (
           <Loading />
         ) : (
-          <DataTable columns={projectColumns} data={projects} />
+          <DataTable columns={taskColumns} data={tasks} />
         )}
       </div>
 
@@ -136,7 +227,7 @@ export default function ProjectsPage() {
           variant="outline"
           size="sm"
           onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-          disabled={currentPage === 1 || projects.length == 0}
+          disabled={currentPage === 1 || tasks.length == 0}
         >
           Previous
         </Button>
@@ -149,7 +240,7 @@ export default function ProjectsPage() {
           onClick={() =>
             setCurrentPage((prev) => Math.min(paging.total_page, prev + 1))
           }
-          disabled={currentPage === paging.total_page || projects.length == 0}
+          disabled={currentPage === paging.total_page || tasks.length == 0}
         >
           Next
         </Button>

@@ -56,18 +56,75 @@ const ProjectDetailDialog = ({ project }: { project: Project }) => {
     }
   };
 
+  const priorityMapping: Record<string, string> = {
+    "1": "Low",
+    "2": "Medium",
+    "3": "High",
+    "4": "Critical",
+  };
+
   const taskColumns: ColumnDef<Task>[] = [
     {
       accessorKey: "task_id",
-      header: "Task ID",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Task ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
     },
     {
       accessorKey: "title",
-      header: "Title",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
     },
     {
-      accessorKey: "description",
-      header: "Description",
+      accessorKey: "priority",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Priority
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return priorityMapping[row.getValue("priority") as string];
+      },
+    },
+    {
+      accessorKey: "is_completed",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Is Completed?
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return row.getValue("is_completed") === true ? "✅" : "❌";
+      },
     },
     {
       accessorKey: "due_date",
@@ -84,23 +141,6 @@ const ProjectDetailDialog = ({ project }: { project: Project }) => {
       },
       cell: ({ row }) => {
         return formatDate(row.getValue("due_date"));
-      },
-    },
-    {
-      accessorKey: "is_completed",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return row.getValue("is_completed") === true ? "✅" : "❌";
       },
     },
     {

@@ -22,6 +22,7 @@ export class Task {
   private _updatedAt?: Date;
   private _deletedAt?: Date;
   private _assignedProject?: Project;
+  private _projectID?: number;
   readonly ownerID?: number;
 
   get taskID(): string {
@@ -64,6 +65,10 @@ export class Task {
     return this._assignedProject;
   }
 
+  get projectID(): number | undefined {
+    return this._projectID;
+  }
+
   constructor(
     id: number,
     taskID: string,
@@ -73,6 +78,7 @@ export class Task {
     isCompleted: boolean = false,
     dueDate?: Date,
     ownerID?: number,
+    projectID?: number,
   ) {
     this.id = id;
     this._taskID = taskID;
@@ -83,6 +89,7 @@ export class Task {
     this._dueDate = dueDate;
     this._createdAt = new Date();
     this.ownerID = ownerID;
+    this._projectID = projectID;
   }
 
   markAsCompleted() {
@@ -105,6 +112,8 @@ export class Task {
     description: string;
     priority: TaskPriority;
     due_date: string;
+    project_id: number;
+    is_completed: boolean;
   }) {
     if (Object.keys(params).length === 0) {
       return;
@@ -126,6 +135,14 @@ export class Task {
       this._dueDate = new Date(params.due_date);
     }
 
+    if (params.project_id) {
+      this._projectID = params.project_id;
+    }
+
+    if (params.is_completed) {
+      this._isCompleted = params.is_completed;
+    }
+
     this._updatedAt = new Date();
   }
 
@@ -135,6 +152,7 @@ export class Task {
     priority: TaskPriority;
     due_date?: string;
     owner_id: number;
+    project_id?: number;
   }): Task {
     try {
       const schema = z.object({
@@ -160,6 +178,7 @@ export class Task {
         false,
         parsed.due_date ? new Date(parsed.due_date) : undefined,
         params.owner_id,
+        params.project_id,
       );
     } catch (err) {
       if (err instanceof ZodError) {

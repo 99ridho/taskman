@@ -14,3 +14,7 @@ export function formatDate(dateString: string) {
     minute: "2-digit",
   });
 }
+
+export function formatDateForDatePicker(dateString: string) {
+  return new Date(dateString).toISOString().slice(0, 19);
+}
