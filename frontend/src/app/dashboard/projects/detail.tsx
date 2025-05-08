@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import PriorityChips from "../priority-chip";
 
 const ProjectDetailDialog = ({ project }: { project: Project }) => {
   const [detailOpened, setDetailOpened] = useState(false);
@@ -63,13 +64,6 @@ const ProjectDetailDialog = ({ project }: { project: Project }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const priorityMapping: Record<string, string> = {
-    "1": "Low",
-    "2": "Medium",
-    "3": "High",
-    "4": "Critical",
   };
 
   const taskColumns: ColumnDef<Task>[] = [
@@ -143,7 +137,7 @@ const ProjectDetailDialog = ({ project }: { project: Project }) => {
         );
       },
       cell: ({ row }) => {
-        return priorityMapping[row.getValue("priority") as string];
+        return <PriorityChips priority={row.getValue("priority") as string} />;
       },
     },
     {

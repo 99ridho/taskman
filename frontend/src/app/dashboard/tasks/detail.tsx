@@ -18,6 +18,7 @@ import {
 import { useState } from "react";
 import { Task } from "./types";
 import { Project } from "../projects/types";
+import PriorityChips from "../priority-chip";
 
 const TaskDetailDialog = ({
   task,
@@ -27,12 +28,6 @@ const TaskDetailDialog = ({
   getProjectDetail: (id: string) => Project | undefined;
 }) => {
   const [detailOpened, setDetailOpened] = useState(false);
-  const priorityMapping: Record<string, string> = {
-    "1": "Low",
-    "2": "Medium",
-    "3": "High",
-    "4": "Critical",
-  };
 
   return (
     <>
@@ -75,7 +70,9 @@ const TaskDetailDialog = ({
                     </TableRow>
                     <TableRow>
                       <TableHead>Priority</TableHead>
-                      <TableCell>{priorityMapping[task.priority]}</TableCell>
+                      <TableCell>
+                        <PriorityChips priority={task.priority} />
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableHead>Due Date</TableHead>

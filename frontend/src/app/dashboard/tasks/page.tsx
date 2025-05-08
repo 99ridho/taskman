@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import PriorityChips from "../priority-chip";
 
 export default function TasksPage() {
   const auth = useAuth();
@@ -46,13 +47,6 @@ export default function TasksPage() {
     },
     {} as Record<string, Project>
   );
-
-  const priorityMapping: Record<string, string> = {
-    "1": "Low",
-    "2": "Medium",
-    "3": "High",
-    "4": "Critical",
-  };
 
   const fetchData = async (page: number) => {
     setLoading(true);
@@ -162,7 +156,7 @@ export default function TasksPage() {
         );
       },
       cell: ({ row }) => {
-        return priorityMapping[row.getValue("priority") as string];
+        return <PriorityChips priority={row.getValue("priority") as string} />;
       },
     },
     {
