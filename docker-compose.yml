@@ -29,6 +29,9 @@ services:
 
       - "traefik.http.services.be-taskman.loadbalancer.server.port=8001"
     command: "npm run start"
+    networks:
+      - traefik-enabled-net
+
   frontend:
     build:
       context: ./frontend
@@ -52,3 +55,9 @@ services:
       - "traefik.http.routers.fe-taskman.rule=Host(`taskman.ridhopratama.net`)"
       - "traefik.http.services.fe-taskman.loadbalancer.server.port=3001"
     command: "npm run start"
+    networks:
+      - traefik-enabled-net
+
+networks:
+  traefik-enabled-net:
+    external: true
