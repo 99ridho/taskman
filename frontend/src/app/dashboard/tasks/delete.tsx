@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -87,8 +88,8 @@ const TaskDeleteDialog = ({
               >
                 No
               </Button>
-              <Button variant="destructive" type="submit">
-                Yes
+              <Button variant="destructive" type="submit" disabled={pending}>
+                {pending ? "Processing" : "Yes"}
               </Button>
             </DialogFooter>
           </form>

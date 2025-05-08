@@ -18,6 +18,7 @@ describe('TaskUseCase', () => {
       createTask: vi.fn(),
       deleteTaskByTaskID: vi.fn(),
       findAllTasks: vi.fn(),
+      findTaskSummary: vi.fn(),
     };
 
     mockProjectRepository = {
@@ -27,6 +28,7 @@ describe('TaskUseCase', () => {
       createProject: vi.fn(),
       deleteProjectByProjectID: vi.fn(),
       updateProjectByProjectID: vi.fn(),
+      findAllTasksForProjectID: vi.fn(),
     };
 
     taskUseCase = new TaskUseCase(mockTaskRepository, mockProjectRepository);
@@ -241,6 +243,8 @@ describe('TaskUseCase', () => {
         description: 'New description',
         priority: TaskPriority.HIGH,
         due_date: new Date().toISOString(),
+        project_id: 1,
+        is_completed: true,
       };
 
       vi.spyOn(mockTaskRepository, 'findTaskByTaskID').mockResolvedValue(
@@ -278,6 +282,8 @@ describe('TaskUseCase', () => {
         description: 'New description',
         priority: TaskPriority.HIGH,
         due_date: new Date().toISOString(),
+        project_id: 1,
+        is_completed: true,
       };
 
       vi.spyOn(mockTaskRepository, 'findTaskByTaskID').mockRejectedValue(error);
@@ -303,6 +309,7 @@ describe('TaskUseCase', () => {
         priority: TaskPriority.HIGH,
         due_date: new Date('2024-01-01').toISOString(),
         owner_id: 1,
+        project_id: 1,
       };
 
       const expectedTaskID = 'task-123';
@@ -324,6 +331,7 @@ describe('TaskUseCase', () => {
         priority: TaskPriority.HIGH,
         due_date: new Date('2024-01-01').toISOString(),
         owner_id: 1,
+        project_id: 1,
       };
 
       const error = new Error('Failed to create task');

@@ -12,6 +12,9 @@ describe('Task Class', () => {
       'proj-1',
       'First Project',
       'This is first project',
+      new Date(),
+      undefined,
+      undefined,
       1,
     );
     task = new Task(
@@ -60,7 +63,9 @@ describe('Task Class', () => {
       title: 'Updated Task',
       description: 'Updated description',
       priority: TaskPriority.HIGH,
-      due_date: new Date('2024-01-15'),
+      due_date: '2024-01-15T00:00:00Z',
+      project_id: 1,
+      is_completed: true,
     };
 
     task.editTask(newParams);
@@ -80,7 +85,9 @@ describe('Task Class', () => {
         title: string;
         description: string;
         priority: TaskPriority;
-        due_date: Date;
+        due_date: string;
+        project_id: number;
+        is_completed: boolean;
       },
     );
 

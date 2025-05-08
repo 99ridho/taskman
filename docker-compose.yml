@@ -1,0 +1,54 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    image: be-taskman
+    environment:
+      - NODE_ENV=staging
+    ports:
+      - 8001:8001
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "1"
+          memory: 500m
+        reservations:
+          memory: 400m
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.middlewares.rate-limit.rateLimit.average=100"
+      - "traefik.http.middlewares.rate-limit.rateLimit.burst=50"
+
+      - "traefik.http.routers.be-taskman.rule=Host(`taskman-api.ridhopratama.net`)"
+      - "traefik.http.routers.be-taskman.entryPoints=web,websecure"
+      - "traefik.http.routers.be-taskman.middlewares=rate-limit"
+
+      - "traefik.http.services.be-taskman.loadbalancer.server.port=8001"
+    command: "npm run start"
+  frontend:
+    build:
+      context: ./frontend
+    image: fe-taskman
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    ports:
+      - 3001:3001
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          memory: 200m
+        reservations:
+          memory: 180m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fe-taskman.rule=Host(`taskman.ridhopratama.net`)"
+      - "traefik.http.services.fe-taskman.loadbalancer.server.port=3001"
+    command: "npm run start"

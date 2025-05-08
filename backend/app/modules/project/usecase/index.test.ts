@@ -15,6 +15,7 @@ describe('ProjectUseCase', () => {
       createProject: vi.fn(),
       deleteProjectByProjectID: vi.fn(),
       updateProjectByProjectID: vi.fn(),
+      findAllTasksForProjectID: vi.fn(),
     };
 
     useCase = new ProjectUseCase(mockProjectRepository);

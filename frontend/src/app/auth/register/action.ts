@@ -1,6 +1,6 @@
 "use server";
 
-import { login, register, setToken } from "@/lib/auth";
+import { register } from "@/lib/auth";
 import { BaseResponse } from "@/lib/http/response";
 
 interface RegisterCredentials {

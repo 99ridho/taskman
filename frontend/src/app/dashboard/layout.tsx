@@ -1,6 +1,6 @@
 import Navbar from "@/components/navigation/navbar";
 import Sidebar from "@/components/navigation/sidebar";
-import { getProfile, getToken, logout } from "@/lib/auth";
+import { getProfile, getToken } from "@/lib/auth";
 import { AuthProvider } from "./context";
 import logoutAction from "./logout-action";
 
@@ -12,10 +12,17 @@ export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
   const token = (await getToken()) ?? "";
-  const profile = (await getProfile(token)).data;
+  const getProfileSafe = async (token: string) => {
+    try {
+      return (await getProfile(token)).data;
+    } catch (err) {
+      console.error(err);
+      return undefined;
+    }
+  };
 
   return (
-    <AuthProvider token={token} profile={profile}>
+    <AuthProvider token={token} profile={await getProfileSafe(token)}>
       <div className="min-h-screen">
         {/* Navbar */}
         <Navbar logoutHandler={logoutAction} />
