@@ -1,4 +1,4 @@
-import { TaskDTO } from '../dto';
+import { TaskDTO, TaskSummary } from '../dto';
 
 export default interface TaskRepository {
   findTaskByTaskID(taskID: string, ownerID: number): Promise<TaskDTO>;
@@ -14,4 +14,5 @@ export default interface TaskRepository {
   ): Promise<TaskDTO>;
   deleteTaskByTaskID(taskID: string, ownerID: number): Promise<boolean>;
   createTask(arg: TaskDTO): Promise<string>;
+  findTaskSummary(ownerID: number): Promise<TaskSummary>;
 }

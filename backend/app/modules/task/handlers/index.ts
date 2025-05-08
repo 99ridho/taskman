@@ -131,4 +131,15 @@ export default class TaskHandlers {
       throw err;
     }
   }
+
+  async getTaskSummary(req: Request, res: Response) {
+    try {
+      const result = await this.useCase.getTaskSummary(req.user?.id ?? 0);
+      res.status(200).json({
+        data: result,
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
 }

@@ -19,3 +19,11 @@ export interface Task {
   owner_id: string;
   project_id: string;
 }
+
+export interface TaskSummary {
+  total_tasks: number;
+  completed_tasks: number;
+  incomplete_tasks: number;
+  overdue_tasks: number;
+  due_today_tasks: number;
+}

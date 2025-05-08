@@ -21,6 +21,10 @@ export default class TaskModule {
     const tasksRoutes = express.Router();
     tasksRoutes.use(jwtMiddleware);
     tasksRoutes.get('/', this.handlers.getTasks.bind(this.handlers));
+    tasksRoutes.get(
+      '/summary',
+      this.handlers.getTaskSummary.bind(this.handlers),
+    );
     tasksRoutes.post('/', this.handlers.createTask.bind(this.handlers));
     tasksRoutes.put('/:task_id', this.handlers.editTask.bind(this.handlers));
     tasksRoutes.delete(

@@ -47,3 +47,29 @@ create index project_id_idx on projects(project_id);
 create index task_id_idx on tasks(task_id);
 create index users_id_idx on users(user_id);
 create index users_username_idx on users(username);
+
+create or replace view user_task_summary as
+with user_tasks as (
+  select *
+  from tasks
+  where deleted_at is null
+),
+task_summary as (
+  select
+    belongs_to,
+    count(*) as total_tasks,
+    count(*) filter (where is_completed = true) as completed_tasks,
+    count(*) filter (where is_completed = false) as incomplete_tasks,
+    count(*) filter (
+      where is_completed = false
+        and due_date is not null
+        and due_date < now()
+    ) as overdue_tasks,
+    count(*) filter (
+      where due_date is not null
+        and date_trunc('day', due_date) = current_date
+    ) as due_today_tasks
+  from user_tasks
+  group by belongs_to
+)
+select * from task_summary;

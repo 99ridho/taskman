@@ -2,7 +2,7 @@ import { GeneralError } from '../../../error';
 import { toProjectDomain } from '../../project/dto';
 import ProjectRepository from '../../project/repository';
 import { Task, TaskPriority } from '../domain';
-import { fromTaskDomain, TaskDTO, toTaskDomain } from '../dto';
+import { fromTaskDomain, TaskDTO, TaskSummary, toTaskDomain } from '../dto';
 import TaskRepository from '../repository';
 
 export default class TaskUseCase {
@@ -240,6 +240,19 @@ export default class TaskUseCase {
         payload: {
           task_id: taskID,
         },
+      } as GeneralError;
+    }
+  }
+
+  async getTaskSummary(ownerID: number): Promise<TaskSummary> {
+    try {
+      return await this.repository.findTaskSummary(ownerID);
+    } catch (err) {
+      throw {
+        errorType: (err as GeneralError).errorType,
+        details: (err as GeneralError).details,
+        message: (err as Error).message,
+        name: 'task use case error',
       } as GeneralError;
     }
   }

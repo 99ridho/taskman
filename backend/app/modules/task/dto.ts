@@ -16,6 +16,14 @@ export type TaskDTO = {
   deleted_at?: Date;
 };
 
+export type TaskSummary = {
+  total_tasks: number;
+  completed_tasks: number;
+  incomplete_tasks: number;
+  overdue_tasks: number;
+  due_today_tasks: number;
+};
+
 export const fromTaskDomain = (task: Task): TaskDTO => ({
   id: task.id,
   task_id: task.taskID,

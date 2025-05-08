@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import TaskRepository from '.';
-import { TaskDTO } from '../dto';
+import { TaskDTO, TaskSummary } from '../dto';
 import { GeneralError } from '../../../error';
 
 export default class PostgresTaskRepository implements TaskRepository {
@@ -253,6 +253,39 @@ export default class PostgresTaskRepository implements TaskRepository {
       } as GeneralError;
     } finally {
       client.release();
+    }
+  }
+
+  async findTaskSummary(ownerID: number): Promise<TaskSummary> {
+    try {
+      const result = await this.pool.query(
+        'select * from user_task_summary where belongs_to = $1',
+        [ownerID],
+      );
+
+      if (result.rowCount === 0) {
+        return {
+          total_tasks: 0,
+          completed_tasks: 0,
+          due_today_tasks: 0,
+          incomplete_tasks: 0,
+          overdue_tasks: 0,
+        };
+      }
+
+      return {
+        total_tasks: parseInt(result.rows[0].total_tasks),
+        completed_tasks: parseInt(result.rows[0].completed_tasks),
+        due_today_tasks: parseInt(result.rows[0].due_today_tasks),
+        incomplete_tasks: parseInt(result.rows[0].incomplete_tasks),
+        overdue_tasks: parseInt(result.rows[0].overdue_tasks),
+      };
+    } catch (err) {
+      throw {
+        errorType: 'SERVER_ERROR',
+        message: (err as Error).message,
+        name: 'postgres task repository error',
+      } as GeneralError;
     }
   }
 }
