@@ -31,7 +31,7 @@ export async function createTask(
   token: string
 ) {
   const request: HttpClientRequestType = {
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
+    baseURL: process.env.MUTATION_API_BASE_URL || "",
     method: "POST",
     path: "/tasks",
     headers: {
@@ -57,7 +57,7 @@ export async function updateTask(
   token: string
 ) {
   const request: HttpClientRequestType = {
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
+    baseURL: process.env.MUTATION_API_BASE_URL || "",
     method: "PUT",
     path: `/tasks/${taskID}`,
     headers: {
@@ -75,7 +75,7 @@ export async function updateTask(
 
 export async function deleteTask(taskID: string, token: string) {
   const request: HttpClientRequestType = {
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
+    baseURL: process.env.MUTATION_API_BASE_URL || "",
     method: "DELETE",
     path: `/tasks/${taskID}`,
     headers: {

@@ -52,7 +52,7 @@ export async function createProject(
   token: string
 ) {
   const request: HttpClientRequestType = {
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
+    baseURL: process.env.MUTATION_API_BASE_URL || "",
     method: "POST",
     path: "/projects",
     headers: {
@@ -71,7 +71,7 @@ export async function updateProject(
   token: string
 ) {
   const request: HttpClientRequestType = {
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
+    baseURL: process.env.MUTATION_API_BASE_URL || "",
     method: "PUT",
     path: `/projects/${projectID}`,
     headers: {
@@ -86,7 +86,7 @@ export async function updateProject(
 
 export async function deleteProject(projectID: string, token: string) {
   const request: HttpClientRequestType = {
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
+    baseURL: process.env.MUTATION_API_BASE_URL || "",
     method: "DELETE",
     path: `/projects/${projectID}`,
     headers: {

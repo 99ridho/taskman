@@ -12,16 +12,13 @@ export async function login(credential: {
   username: string;
   password: string;
 }): Promise<BaseResponse<string>> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/login`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credential),
-    }
-  );
+  const response = await fetch(`${process.env.MUTATION_API_BASE_URL}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credential),
+  });
 
   return await response.json();
 }
@@ -31,7 +28,7 @@ export async function register(credential: {
   password: string;
 }): Promise<BaseResponse<string>> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/register`,
+    `${process.env.MUTATION_API_BASE_URL}/register`,
     {
       method: "POST",
       headers: {
