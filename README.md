@@ -22,4 +22,5 @@ https://taskman.ridhopratama.net/
 
 ## High-level Architecture Setup
 
-<img width="1113" alt="image" src="https://github.com/user-attachments/assets/bb5e0873-839f-4d53-8da4-e3a8e24fbefd" />
+<img width="1014" alt="image" src="https://github.com/user-attachments/assets/82c17089-79ab-4db5-aca8-38615389df84" />
+
